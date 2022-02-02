@@ -449,6 +449,6 @@ LOAD data_init
                 0x0000000000000148                __vector_18
                 0x0000000000000148                __vector_20
 
-.data.pattern   0x0000000000800100       0x2a load address 0x000000000000014c
- .data.pattern  0x0000000000800100       0x2a main.o
+.data.pattern   0x0000000000800100       0x18 load address 0x000000000000014c
+ .data.pattern  0x0000000000800100       0x18 main.o
                 0x0000000000800100                pattern

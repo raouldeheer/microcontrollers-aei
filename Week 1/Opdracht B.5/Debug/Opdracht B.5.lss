@@ -3,37 +3,37 @@ Opdracht B.5.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000000  00800100  00000176  000001ea  2**0
+  0 .data         00000000  00800100  00000164  000001d8  2**0
                   ALLOC, LOAD, DATA
   1 .text         000000ec  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .comment      0000002f  00000000  00000000  000001ea  2**0
+  2 .comment      0000002f  00000000  00000000  000001d8  2**0
                   CONTENTS, READONLY
-  3 .debug_aranges 00000028  00000000  00000000  00000219  2**0
+  3 .debug_aranges 00000028  00000000  00000000  00000207  2**0
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_info   00000b6a  00000000  00000000  00000241  2**0
+  4 .debug_info   00000b6a  00000000  00000000  0000022f  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_abbrev 0000084d  00000000  00000000  00000dab  2**0
+  5 .debug_abbrev 0000084d  00000000  00000000  00000d99  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_line   00000290  00000000  00000000  000015f8  2**0
+  6 .debug_line   00000290  00000000  00000000  000015e6  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_frame  00000034  00000000  00000000  00001888  2**2
+  7 .debug_frame  00000034  00000000  00000000  00001878  2**2
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_str    0000027d  00000000  00000000  000018bc  2**0
+  8 .debug_str    0000027d  00000000  00000000  000018ac  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_loc    0000008e  00000000  00000000  00001b39  2**0
+  9 .debug_loc    0000008e  00000000  00000000  00001b29  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_ranges 00000018  00000000  00000000  00001bc7  2**0
+ 10 .debug_ranges 00000018  00000000  00000000  00001bb7  2**0
                   CONTENTS, READONLY, DEBUGGING
  11 .text         00000004  00000148  00000148  000001bc  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
- 12 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00001be0  2**2
+ 12 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00001bd0  2**2
                   CONTENTS, READONLY, DEBUGGING
  13 .text.wait    0000001e  0000012a  0000012a  0000019e  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
  14 .text.main    0000003e  000000ec  000000ec  00000160  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
- 15 .data.pattern 0000002a  00800100  0000014c  000001c0  2**0
+ 15 .data.pattern 00000018  00800100  0000014c  000001c0  2**0
                   CONTENTS, ALLOC, LOAD, DATA
 
 Disassembly of section .text:
@@ -77,7 +77,7 @@ Disassembly of section .text:
 
 0000008c <.dinit>:
   8c:	01 00       	.word	0x0001	; ????
-  8e:	01 2a       	or	r0, r17
+  8e:	01 18       	sub	r0, r1
   90:	00 01       	movw	r0, r0
   92:	4c 00       	.word	0x004c	; ????
 
@@ -141,7 +141,7 @@ Disassembly of section .text:
 Disassembly of section .text.wait:
 
 0000012a <wait>:
-	{0x40, 50}, {0x20, 50}, {0x10, 50}, {0x04, 50}, {0x02, 50}, {0x01, 50}, {0x00, 0x00}
+	{0x81, 50}, {0x42, 50}, {0x24, 50}, {0x18, 50}, {0x24, 50}, {0x42, 50}, {0x81, 50}, {0x00, 0x00}
 };
 
 void wait( int ms )
