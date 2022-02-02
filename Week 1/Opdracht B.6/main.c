@@ -24,20 +24,27 @@ int main(void)
 	int counter = 0;
 	int isFast = 0;
 	int isOn = 0;
+	int isPressed = 0;
 	
     while(1)
     {
-		wait(100);
-		counter += 100;
+		wait(10);
+		counter += 10;
 		
 		if (PINC & 0x01)
 		{
-			if (isFast)
+			if (isPressed == 0)
 			{
-				isFast = 0;
-			} else {
-				isFast = 1;
+				isPressed = 1;
+				if (isFast)
+				{
+					isFast = 0;
+				} else {
+					isFast = 1;
+				}
 			}
+		} else {
+			isPressed = 0;
 		}
 		
 		if (isFast)
