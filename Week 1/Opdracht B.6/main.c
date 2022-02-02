@@ -17,24 +17,56 @@ void wait( int ms )
 	}
 }
 
-
 int main(void)
 {
 	DDRD = 0b11111111;
-	int i = 1000;
+	
+	int counter = 0;
+	int isFast = 0;
+	int isOn = 0;
+	
     while(1)
     {
-		PORTD = 0x80;
-		wait(i);
-		PORTD = 0x00;
-		wait(i);
-		if(PINC & 0x01){
-			if(i == 1000){
-				i = 4000;
-			}else{
-				i = 1000;
+		wait(100);
+		counter += 100;
+		
+		if (PINC & 0x01)
+		{
+			if (isFast)
+			{
+				isFast = 0;
+			} else {
+				isFast = 1;
 			}
-				
+		}
+		
+		if (isFast)
+		{
+			if (counter >= 250)
+			{
+				if (isOn)
+				{
+					isOn = 0;
+					PORTD = 0x00;
+				} else {
+					isOn = 1;
+					PORTD = 0x80;
+				}
+				counter -= 250;
+			}
+		} else {
+			if (counter >= 1000)
+			{
+				if (isOn)
+				{
+					isOn = 0;
+					PORTD = 0x00;
+				} else {
+					isOn = 1;
+					PORTD = 0x80;
+				}
+				counter -= 1000;
+			}
 		}
     }
 	return 1;
