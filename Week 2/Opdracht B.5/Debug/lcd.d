@@ -1,4 +1,4 @@
-main.d main.o: .././main.c \
+lcd.d lcd.o: .././lcd.c \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\io.h \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\avr\sfr_defs.h \
  c:\program\ files\microchip\xc8\v2.31\avr\avr\include\inttypes.h \

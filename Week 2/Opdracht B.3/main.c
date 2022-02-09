@@ -9,10 +9,35 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
+unsigned int i = 0;
+int int1 = 0;
+int int2 = 0;
+
 void wait( int ms ) {
 	for (int i=0; i<ms; i++) {
 		_delay_ms( 1 );		// library function (max 30 ms at 8MHz)
 	}
+}
+/*****************************************************************
+short:			ISR INT0
+inputs:
+outputs:
+notes:			Set PORTD.5
+Version :    	DMK, Initial code
+*******************************************************************/
+ISR( INT1_vect ) {
+	int1 = 1;
+}
+
+/******************************************************************
+short:			ISR INT1
+inputs:
+outputs:
+notes:			Clear PORTD.5
+Version :    	DMK, Initial code
+*******************************************************************/
+ISR( INT2_vect ) {
+	int2 = 1;
 }
 
 const unsigned char Numbers [16] = {
@@ -38,47 +63,46 @@ const unsigned char Numbers [16] = {
 
 int main(void)
 {
-	int i = 0;
-	DDRD = 0xFF;
-	DDRC = 0x00;
+	// Init I/O
+	DDRD = 0xF0;			// PORTD(7:4) output, PORTD(3:0) input
+	DDRB = 0xFF;
 	
-	int isPressed = 0;
-	int isPressed1 = 0;
-	int isPressed2 = 0;
+	// Init Interrupt hardware
+	EICRA |= 0x3C;			// INT1 falling edge, INT0 rising edge
+	EIMSK |= 0x06;			// Enable INT1 & INT0
+	
+	// Enable global interrupt system
+	//SREG = 0x80;			// Of direct via SREG of via wrapper
+	sei();
+	
     while(1)
     {
-		if (PINC & 0x01)
+		if (int1 + int2 == 2)
 		{
-			if (isPressed == 0)
+			i = 0;
+		} else {
+			if (int1 == 1)
 			{
-				isPressed = 1;
 				i++;
 			}
-			} else {
-			isPressed = 0;
-		}
-		if (PINC & 0x02)
-		{
-			if (isPressed1 == 0)
+			if (int2 == 1)
 			{
-				isPressed1 = 1;
 				i--;
 			}
-			} else {
-			isPressed1 = 0;
 		}
-		if (PINC & 0x03)
+		int1 = 0;
+		int2 = 0;
+		if (i > 15)
 		{
-			if (isPressed2 == 0)
-			{
-				isPressed2 = 1;
-				i = 0;
-			}
+			PORTB = Numbers[14];
+		} else {
+			if (i < 0) {
+				PORTB = Numbers[14];
 			} else {
-			isPressed2 = 0;
+				PORTB = Numbers[i];
+			}
 		}
-		PORTD = Numbers[i];
-		wait( 50 );
+		wait( 100 );
         //TODO:: Please write your application code 
     }
 }
