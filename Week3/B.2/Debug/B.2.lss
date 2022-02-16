@@ -1,0 +1,266 @@
+
+B.2.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         00000000  00800100  00000182  000001f6  2**0
+                  ALLOC, LOAD, DATA
+  1 .text         000000ec  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .comment      0000002f  00000000  00000000  000001f6  2**0
+                  CONTENTS, READONLY
+  3 .debug_aranges 00000038  00000000  00000000  00000225  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   00000b44  00000000  00000000  0000025d  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 0000086d  00000000  00000000  00000da1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   000002de  00000000  00000000  0000160e  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  00000068  00000000  00000000  000018ec  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    0000027d  00000000  00000000  00001954  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    000000b3  00000000  00000000  00001bd1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000028  00000000  00000000  00001c84  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .text         00000004  0000017c  0000017c  000001f0  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+ 12 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00001cac  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .text.wait    0000001e  0000013a  0000013a  000001ae  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+ 14 .text.timer2Init 00000012  00000158  00000158  000001cc  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+ 15 .text.__vector_9 0000004e  000000ec  000000ec  00000160  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+ 16 .text.main    00000012  0000016a  0000016a  000001de  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+ 17 .data.isHigh  00000002  00800100  00000180  000001f4  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 4a 00 	jmp	0x94	; 0x94 <__ctors_end>
+   4:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+   8:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+   c:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  10:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  14:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  18:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  1c:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  20:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  24:	0c 94 76 00 	jmp	0xec	; 0xec <_etext>
+  28:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  2c:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  30:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  34:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  38:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  3c:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  40:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  44:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  48:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  4c:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  50:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  54:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  58:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  5c:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  60:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  64:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  68:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  6c:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  70:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  74:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  78:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  7c:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  80:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  84:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+  88:	0c 94 be 00 	jmp	0x17c	; 0x17c <__bad_interrupt>
+
+0000008c <.dinit>:
+  8c:	01 00       	.word	0x0001	; ????
+  8e:	01 02       	muls	r16, r17
+  90:	00 01       	movw	r0, r0
+  92:	80 00       	.word	0x0080	; ????
+
+00000094 <__ctors_end>:
+  94:	11 24       	eor	r1, r1
+  96:	1f be       	out	0x3f, r1	; 63
+  98:	cf ef       	ldi	r28, 0xFF	; 255
+  9a:	d0 e1       	ldi	r29, 0x10	; 16
+  9c:	de bf       	out	0x3e, r29	; 62
+  9e:	cd bf       	out	0x3d, r28	; 61
+
+000000a0 <__do_copy_data>:
+  a0:	ec e8       	ldi	r30, 0x8C	; 140
+  a2:	f0 e0       	ldi	r31, 0x00	; 0
+  a4:	40 e0       	ldi	r20, 0x00	; 0
+  a6:	19 c0       	rjmp	.+50     	; 0xda <__do_clear_bss+0x8>
+  a8:	b7 91       	elpm	r27, Z+
+  aa:	a7 91       	elpm	r26, Z+
+  ac:	37 91       	elpm	r19, Z+
+  ae:	27 91       	elpm	r18, Z+
+  b0:	07 91       	elpm	r16, Z+
+  b2:	07 fd       	sbrc	r16, 7
+  b4:	0e c0       	rjmp	.+28     	; 0xd2 <__do_clear_bss>
+  b6:	97 91       	elpm	r25, Z+
+  b8:	87 91       	elpm	r24, Z+
+  ba:	ef 01       	movw	r28, r30
+  bc:	f9 2f       	mov	r31, r25
+  be:	e8 2f       	mov	r30, r24
+  c0:	0b bf       	out	0x3b, r16	; 59
+  c2:	07 90       	elpm	r0, Z+
+  c4:	0d 92       	st	X+, r0
+  c6:	a2 17       	cp	r26, r18
+  c8:	b3 07       	cpc	r27, r19
+  ca:	d9 f7       	brne	.-10     	; 0xc2 <__do_copy_data+0x22>
+  cc:	fe 01       	movw	r30, r28
+  ce:	1b be       	out	0x3b, r1	; 59
+  d0:	04 c0       	rjmp	.+8      	; 0xda <__do_clear_bss+0x8>
+
+000000d2 <__do_clear_bss>:
+  d2:	1d 92       	st	X+, r1
+  d4:	a2 17       	cp	r26, r18
+  d6:	b3 07       	cpc	r27, r19
+  d8:	e1 f7       	brne	.-8      	; 0xd2 <__do_clear_bss>
+  da:	e3 39       	cpi	r30, 0x93	; 147
+  dc:	f4 07       	cpc	r31, r20
+  de:	21 f7       	brne	.-56     	; 0xa8 <__do_copy_data+0x8>
+  e0:	0e 94 b5 00 	call	0x16a	; 0x16a <main>
+  e4:	0c 94 74 00 	jmp	0xe8	; 0xe8 <_exit>
+
+000000e8 <_exit>:
+  e8:	f8 94       	cli
+
+000000ea <__stop_program>:
+  ea:	ff cf       	rjmp	.-2      	; 0xea <__stop_program>
+
+Disassembly of section .text:
+
+0000017c <__bad_interrupt>:
+ 17c:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+Disassembly of section .text.wait:
+
+0000013a <wait>:
+#define BIT(x)			(1 << (x))
+
+// wait(): busy waiting for 'ms' millisecond
+// Used library: util/delay.h
+void wait( int ms ) {
+	for (int tms=0; tms<ms; tms++) {
+ 13a:	20 e0       	ldi	r18, 0x00	; 0
+ 13c:	30 e0       	ldi	r19, 0x00	; 0
+ 13e:	08 c0       	rjmp	.+16     	; 0x150 <wait+0x16>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 140:	ef ec       	ldi	r30, 0xCF	; 207
+ 142:	f7 e0       	ldi	r31, 0x07	; 7
+ 144:	31 97       	sbiw	r30, 0x01	; 1
+ 146:	f1 f7       	brne	.-4      	; 0x144 <wait+0xa>
+ 148:	00 c0       	rjmp	.+0      	; 0x14a <wait+0x10>
+ 14a:	00 00       	nop
+ 14c:	2f 5f       	subi	r18, 0xFF	; 255
+ 14e:	3f 4f       	sbci	r19, 0xFF	; 255
+ 150:	28 17       	cp	r18, r24
+ 152:	39 07       	cpc	r19, r25
+ 154:	ac f3       	brlt	.-22     	; 0x140 <wait+0x6>
+		_delay_ms( 1 );			// library function (max 30 ms at 8MHz)
+	}
+}
+ 156:	08 95       	ret
+
+Disassembly of section .text.timer2Init:
+
+00000158 <timer2Init>:
+
+volatile int isHigh = 1;
+
+void timer2Init( void ) {
+	OCR2 = 117;				// Compare value of counter 2
+ 158:	85 e7       	ldi	r24, 0x75	; 117
+ 15a:	83 bd       	out	0x23, r24	; 35
+	TIMSK |= BIT(7);		// T2 compare match interrupt enable
+ 15c:	87 b7       	in	r24, 0x37	; 55
+ 15e:	80 68       	ori	r24, 0x80	; 128
+ 160:	87 bf       	out	0x37, r24	; 55
+	sei();					// turn_on intr all
+ 162:	78 94       	sei
+	TCCR2 = 0b00001101;		// Initialize T2: timer, prescaler=1024, compare output disconnected,CTC,RUN
+ 164:	8d e0       	ldi	r24, 0x0D	; 13
+ 166:	85 bd       	out	0x25, r24	; 37
+ 168:	08 95       	ret
+
+Disassembly of section .text.__vector_9:
+
+000000ec <__vector_9>:
+}
+
+ISR( TIMER2_COMP_vect ) {
+  ec:	1f 92       	push	r1
+  ee:	0f 92       	push	r0
+  f0:	0f b6       	in	r0, 0x3f	; 63
+  f2:	0f 92       	push	r0
+  f4:	11 24       	eor	r1, r1
+  f6:	8f 93       	push	r24
+  f8:	9f 93       	push	r25
+	PORTC ^= BIT(0);
+  fa:	95 b3       	in	r25, 0x15	; 21
+  fc:	81 e0       	ldi	r24, 0x01	; 1
+  fe:	89 27       	eor	r24, r25
+ 100:	85 bb       	out	0x15, r24	; 21
+	if ( isHigh == 1 ) {
+ 102:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <_edata>
+ 106:	90 91 01 01 	lds	r25, 0x0101	; 0x800101 <_edata+0x1>
+ 10a:	01 97       	sbiw	r24, 0x01	; 1
+ 10c:	39 f4       	brne	.+14     	; 0x11c <__vector_9+0x30>
+		OCR2 = 117;
+ 10e:	85 e7       	ldi	r24, 0x75	; 117
+ 110:	83 bd       	out	0x23, r24	; 35
+		isHigh = 0;
+ 112:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <_edata+0x1>
+ 116:	10 92 00 01 	sts	0x0100, r1	; 0x800100 <_edata>
+ 11a:	08 c0       	rjmp	.+16     	; 0x12c <__vector_9+0x40>
+	} else {
+		OCR2 = 195;
+ 11c:	83 ec       	ldi	r24, 0xC3	; 195
+ 11e:	83 bd       	out	0x23, r24	; 35
+		isHigh = 1;
+ 120:	81 e0       	ldi	r24, 0x01	; 1
+ 122:	90 e0       	ldi	r25, 0x00	; 0
+ 124:	90 93 01 01 	sts	0x0101, r25	; 0x800101 <_edata+0x1>
+ 128:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <_edata>
+	}
+}
+ 12c:	9f 91       	pop	r25
+ 12e:	8f 91       	pop	r24
+ 130:	0f 90       	pop	r0
+ 132:	0f be       	out	0x3f, r0	; 63
+ 134:	0f 90       	pop	r0
+ 136:	1f 90       	pop	r1
+ 138:	18 95       	reti
+
+Disassembly of section .text.main:
+
+0000016a <main>:
+
+int main( void ) {
+	DDRC = 0xFF;				// set PORTC for output (toggle PC0)
+ 16a:	8f ef       	ldi	r24, 0xFF	; 255
+ 16c:	84 bb       	out	0x14, r24	; 20
+	timer2Init();
+ 16e:	0e 94 ac 00 	call	0x158	; 0x158 <timer2Init>
+
+	while (1) {
+		// do something else
+		wait(10);			// every 10 ms (busy waiting
+ 172:	8a e0       	ldi	r24, 0x0A	; 10
+ 174:	90 e0       	ldi	r25, 0x00	; 0
+ 176:	0e 94 9d 00 	call	0x13a	; 0x13a <wait>
+ 17a:	fb cf       	rjmp	.-10     	; 0x172 <main+0x8>
