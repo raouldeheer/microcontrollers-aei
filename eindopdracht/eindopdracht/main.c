@@ -4,58 +4,11 @@
  * Created: 3/16/2022 11:04:54 AM
  *  Author: raoul
  */
-//  #define F_CPU 8e6
-//  #include <avr/io.h>
-//  #include <util/delay.h>
-//  #include <avr/interrupt.h>
-//  #include <stdio.h>
- 
- 
-//  #define BIT(x)	(1 << (x))
-
-//  void wait( int ms )
-//  {
-// 	 for (int tms=0; tms<ms; tms++)
-// 	 {
-// 		 _delay_ms( 1 );			// library function (max 30 ms at 8MHz)
-// 	 }
-//  }
-
-
-// int main(void)
-// {
-		
-// 	DDRF = 0x00;				// set PORTF for input (ADC)
-// 	DDRA = 0xFF;				// set PORTA for output
-// 	DDRB = 0xFF;				// set PORTB for output
-		
-// 	ADMUX = 0b11100001;			// AREF=2.56v, ADLAR=1, ADC1
-// 	ADCSRA = 0b10000110;		// ADC-enable, not started, not free running, division by 64
-
-// 	while (1)
-// 	{
-// 		ADMUX = 0b11100000;				// AREF=2.56v, ADLAR=1, ADC0
-// 		ADCSRA |= 0b01000000;			// Start ADC
-// 		while ( ADCSRA & 0b01000000 ) ;	// Wait for completion
-			
-// 		int temp = ADCH;
-// 		PORTA = temp;					// Show MSB of ADC
-			
-// 		ADMUX = 0b11100001;				// AREF=2.56v, ADLAR=1, ADC1
-// 		ADCSRA |= 0b01000000;			// Start ADC
-// 		while ( ADCSRA & 0b01000000 ) ;	// Wait for completion
-			
-// 		int temp2 = ADCH;
-// 		PORTB = temp2;					// Show MSB of ADC
-			
-// 		wait(500);						// every 50 ms (busy waiting)
-// 	}
-    
-// }
-
 #define F_CPU 8e6
 #include <avr/io.h>
 #include <util/delay.h>
+#include <time.h>
+#include "shapes.h"
 
 void twi_init(void)
 {
@@ -129,25 +82,47 @@ void value_to_display(int values[64])
 	}
 }
 
-int checkNextMove(int values[64], int x, int y)
+int checkSingleBlock(int values[64], int x, int y, POS checkOffset)
 {
-	if (getValueInValues(values, x, y+1) || y>=8)
+	if (getValueInValues(values, x + checkOffset.x, y+checkOffset.y) || y>8)
 	{
 		return 1;
 	}
 	return 0;
 }
 
+int checkNextMove(int values[64], POS block[4], POS checkOffset)
+{
+	int result = checkSingleBlock(values, block[0].x, block[0].y, checkOffset);
+	for (int i = 1; i<4; i++)
+	{
+		result += checkSingleBlock(values, block[0].x + block[i].x, block[0].y + block[i].y, checkOffset);
+	}
+	return result;
+}
+
 int checkFullLine(int values[64], int y)
 {
-	return getValueInValues(values, 1, y) 
-		&& getValueInValues(values, 2, y)
-		&& getValueInValues(values, 3, y)
-		&& getValueInValues(values, 4, y)
-		&& getValueInValues(values, 5, y)
-		&& getValueInValues(values, 6, y)
-		&& getValueInValues(values, 7, y)
-		&& getValueInValues(values, 8, y);
+	return getValueInValues(values, 1, y)
+	&& getValueInValues(values, 2, y)
+	&& getValueInValues(values, 3, y)
+	&& getValueInValues(values, 4, y)
+	&& getValueInValues(values, 5, y)
+	&& getValueInValues(values, 6, y)
+	&& getValueInValues(values, 7, y)
+	&& getValueInValues(values, 8, y);
+}
+
+int checkEmptyLine(int values[64], int y)
+{
+	return getValueInValues(values, 1, y)
+	|| getValueInValues(values, 2, y)
+	|| getValueInValues(values, 3, y)
+	|| getValueInValues(values, 4, y)
+	|| getValueInValues(values, 5, y)
+	|| getValueInValues(values, 6, y)
+	|| getValueInValues(values, 7, y)
+	|| getValueInValues(values, 8, y);
 }
 
 void clearLine(int values[64], int y) 
@@ -170,6 +145,72 @@ void clearAndMoveLine(int values[64], int y)
 	}
 	clearLine(values, 1);
 }
+
+void drawShape(int values[64], POS block[4])
+{
+	setValueInValues(values, block[0].x, block[0].y, 1);
+	for (int i = 1; i<4; i++)
+	{
+		setValueInValues(values, block[0].x + block[i].x, block[0].y + block[i].y, 1);
+	}
+}
+
+int wallCheckRight(POS block[4])
+{
+	return block[0].x < 8 &&
+	block[0].x + block[1].x < 8 &&
+	block[0].x + block[2].x < 8 &&
+	block[0].x + block[3].x < 8;
+}
+
+int wallCheckLeft(POS block[4])
+{
+	return block[0].x > 1 &&
+	block[0].x + block[1].x > 1 &&
+	block[0].x + block[2].x > 1 &&
+	block[0].x + block[3].x > 1;
+}
+
+int wallCheckRightTurn(POS block[4])
+{
+	return block[0].x <= 8 &&
+	block[0].x + block[1].x <= 8 &&
+	block[0].x + block[2].x <= 8 &&
+	block[0].x + block[3].x <= 8;
+}
+
+int wallCheckLeftTurn(POS block[4])
+{
+	return block[0].x >= 1 &&
+	block[0].x + block[1].x >= 1 &&
+	block[0].x + block[2].x >= 1 &&
+	block[0].x + block[3].x >= 1;
+}
+
+int values[64] = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+};
+int liveValues[64] =  {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+};
+POS block[4];
+int rotation;
+
+
 
 int main( void )
 {
@@ -212,60 +253,52 @@ int main( void )
 	ADMUX = 0b11100001;			// AREF=2.56v, ADLAR=1, ADC1
 	ADCSRA = 0b10000110;		// ADC-enable, not started, not free running, division by 64
 	TCCR1B = 0b00000101;		// Initialize T1: timer, prescaler=1024, CTC,RUN
+
+	block[0].x = 4;
+	block[0].y = 1;
+	rotation = 0;
 	
-	int values[64] = {
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		//1, 1, 0, 1, 1, 1, 1, 1,
-		//1, 1, 0, 1, 1, 1, 1, 1,
-	};
-	int liveValues[64] =  {
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0,
-	};
-	int blockx = 3;
-	int blocky = 0;
+	void (*ptr[4]) (POS block[4]);
+	
+	void (*ptrO[4]) (POS block[4]) = {makeShapeO, makeShapeO, makeShapeO, makeShapeO};
+	void (*ptrI[4]) (POS block[4]) = {makeShapeI1, makeShapeI2, makeShapeI3, makeShapeI4};
+	void (*ptrT[4]) (POS block[4]) = {makeShapeT1, makeShapeT2, makeShapeT3, makeShapeT4};
+	void (*ptrS[4]) (POS block[4]) = {makeShapeS1, makeShapeS2, makeShapeS3, makeShapeS4};
+	void (*ptrZ[4]) (POS block[4]) = {makeShapeZ1, makeShapeZ2, makeShapeZ3, makeShapeZ4};
+	void (*ptrJ[4]) (POS block[4]) = {makeShapeJ1, makeShapeJ2, makeShapeJ3, makeShapeJ4};
+	void (*ptrL[4]) (POS block[4]) = {makeShapeL1, makeShapeL2, makeShapeL3, makeShapeL4};
+		
+	void (**ptrptr[7]) (POS block[4]) = {ptrO,ptrI,ptrT,ptrS,ptrZ,ptrJ,ptrL};
+	
+
+	ADMUX = 0b11100000;				// AREF=2.56v, ADLAR=1, ADC0
+	ADCSRA |= 0b01000000;			// Start ADC
+	while ( ADCSRA & 0b01000000 ) ;	// Wait for completion
+	int randData = ADCH;
+	
+	ADMUX = 0b11100001;				// AREF=2.56v, ADLAR=1, ADC1
+	ADCSRA |= 0b01000000;			// Start ADC
+	while ( ADCSRA & 0b01000000 ) ;	// Wait for completion
+	int randData2 = ADCH;
+	
+	srand(randData*randData*randData2*randData2);
+	int number = ((rand() % (7 - 1 + 1)) + 1) - 1;
+	ptr[0] = ptrptr[number][0];
+	ptr[1] = ptrptr[number][1];
+	ptr[2] = ptrptr[number][2];
+	ptr[3] = ptrptr[number][3];
 	int isSinking = 1;
 	
-	int control1;
+	int leftRightControl;
 	int upDownControl;
-		
+			
 	while (1)
 	{
-		/*
-		// 0x3D
-		if (TCNT1 >= 15625) {
-			TCNT1 = 0;
-			if (bytecode == 0x40)
-			{
-				bytecode = 0x01;
-			}
-			else
-			{
-				bytecode = bytecode << 1;
-			}
-		}
-		
-		send_byte(0x00, bytecode);
-		*/
-		
 		ADMUX = 0b11100000;				// AREF=2.56v, ADLAR=1, ADC0
 		ADCSRA |= 0b01000000;			// Start ADC
 		while ( ADCSRA & 0b01000000 ) ;	// Wait for completion
 		
-		control1 = ADCH;
+		leftRightControl = ADCH;
 		
 		ADMUX = 0b11100001;				// AREF=2.56v, ADLAR=1, ADC1
 		ADCSRA |= 0b01000000;			// Start ADC
@@ -276,28 +309,33 @@ int main( void )
 		for (int i = 0; i < 64; i++) {
 			liveValues[i] = values[i];
 		}
+		ptr[rotation](block);
 		
-		if (control1 > 190)
+		if (leftRightControl > 190)
 		{
 			// Right
-			//setValueInValues(liveValues, 8, 2, 1);
-			if (blockx < 8)
+			if (wallCheckRight(block))
 			{
-				if (getValueInValues(values, blockx+1, blocky)==0) 
+				POS checkOffset;
+				checkOffset.x = 1;
+				checkOffset.y = 0;
+				if (checkNextMove(values, block, checkOffset) == 0)
 				{
-					blockx++;
+					block[0].x++;
 				}
 			}
 		} 
-		else if (control1 < 60)
+		else if (leftRightControl < 60)
 		{
 			// Left
-			//setValueInValues(liveValues, 6, 2, 1);
-			if (blockx > 1)
+			if (wallCheckLeft(block))
 			{
-				if (getValueInValues(values, blockx-1, blocky)==0)
+				POS checkOffset;
+				checkOffset.x = -1;
+				checkOffset.y = 0;
+				if (checkNextMove(values, block, checkOffset) == 0)
 				{
-					blockx--;
+					block[0].x--;
 				}
 			}
 		}
@@ -305,53 +343,118 @@ int main( void )
 		if (upDownControl > 190)
 		{
 			// Up
-			//setValueInValues(liveValues, 7, 1, 1);
+			int oldRotation = rotation;
+			rotation++;
+			if (rotation >= 4) {
+				rotation = 0;
+			}
+			ptr[rotation](block);
+			POS checkOffset;
+			checkOffset.x = 0;
+			checkOffset.y = 0;
+			if (checkNextMove(values, block, checkOffset) > 0 ||
+				!(wallCheckLeftTurn(block) && wallCheckRightTurn(block)))
+			{
+				rotation = oldRotation;
+				ptr[rotation](block);
+			}
 		}
 		else if (upDownControl < 60)
 		{
 			// Down
-			//setValueInValues(liveValues, 7, 3, 1);
+			int oldRotation = rotation;
+			rotation--;
+			if (rotation <= -1) {
+				rotation = 3;
+			}
+			ptr[rotation](block);
+			POS checkOffset;
+			checkOffset.x = 0;
+			checkOffset.y = 0;
+			if (checkNextMove(values, block, checkOffset) > 0 ||
+				!(wallCheckLeftTurn(block) && wallCheckRightTurn(block)))
+			{
+				rotation = oldRotation;
+				ptr[rotation](block);
+			}
 		}
 		
-		if (isSinking)
-		{
-			if (checkNextMove(values, blockx, blocky))
+		// 0x3D == 15625
+		if (TCNT1 >= 12625) {
+			TCNT1 = 0;
+			if (isSinking)
 			{
-				isSinking=0;
-				setValueInValues(liveValues, blockx, blocky, 1);
-				setValueInValues(values, blockx, blocky, 1);
-				if (blocky == 0)
+				POS checkOffset;
+				checkOffset.x = 0;
+				checkOffset.y = 1;
+				if (checkNextMove(values, block, checkOffset))
 				{
-					//setValueInValues(values, 6, 1, 1);
+					isSinking=0;
+					drawShape(liveValues, block);
+					drawShape(values, block);
+				}
+				else
+				{
+					block[0].y++;
+					drawShape(liveValues, block);
 				}
 			}
-			else
+		
+			for (int i = 0; i<7; i++)
 			{
-				blocky++;
-				setValueInValues(liveValues, blockx, blocky, 1);
+				if (checkFullLine(values, 8-i)) {
+					clearAndMoveLine(values, 8-i);
+				}
 			}
-		}
-		else
-		{
-			//setValueInValues(values, 1, 1, 1);
-		}
-		if (checkFullLine(values, 8)) {
-			clearAndMoveLine(values, 8);
-			//setValueInValues(values, 2, 2, 1);
-		}
 		
-		if (isSinking == 0)
-		{
-			blockx = 3;
-			blocky = 0;
-			isSinking = 1;
+			if (isSinking == 0)
+			{
+				if (checkEmptyLine(values, 1))
+				{	
+					int gameoverValues[64] = {
+						0, 0, 0, 0, 0, 0, 0, 0,
+						0, 1, 1, 1, 1, 1, 1, 0,
+						0, 1, 0, 0, 0, 0, 1, 0,
+						0, 1, 0, 1, 1, 0, 1, 0,
+						0, 1, 0, 1, 1, 0, 1, 0,
+						0, 1, 0, 0, 0, 0, 1, 0,
+						0, 1, 1, 1, 1, 1, 1, 0,
+						0, 0, 0, 0, 0, 0, 0, 0,
+					};
+					int gameoverValues2[64] = {
+						1, 1, 1, 1, 1, 1, 1, 1,
+						1, 0, 0, 0, 0, 0, 0, 1,
+						1, 0, 1, 1, 1, 1, 0, 1,
+						1, 0, 1, 0, 0, 1, 0, 1,
+						1, 0, 1, 0, 0, 1, 0, 1,
+						1, 0, 1, 1, 1, 1, 0, 1,
+						1, 0, 0, 0, 0, 0, 0, 1,
+						1, 1, 1, 1, 1, 1, 1, 1,
+					};
+					while(1){
+						value_to_display(gameoverValues);
+						wait(500);
+						value_to_display(gameoverValues2);
+						wait(500);
+					}
+				}
+				block[0].x = 4;
+				block[0].y = 1;
+				rotation = 0;
+				isSinking = 1;
+				int number = ((rand() % (7 - 1 + 1)) + 1) - 1;
+				ptr[0] = ptrptr[number][0];
+				ptr[1] = ptrptr[number][1];
+				ptr[2] = ptrptr[number][2];
+				ptr[3] = ptrptr[number][3];
+			}
+		} else {
+			drawShape(liveValues, block);		
 		}
+
 		value_to_display(liveValues);
-		
 	
-		
-		
-		wait(500);
+		wait(100);
 	}
 
 	return 1;
